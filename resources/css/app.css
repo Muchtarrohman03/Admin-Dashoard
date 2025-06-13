@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.swiper {
+    @apply w-full h-full;
+}
+.swiper-pagination-bullet {
+    @apply bg-primary !important;
+}
