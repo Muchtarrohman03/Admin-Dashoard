@@ -74,7 +74,7 @@ public function admin(Request $request){
 
         $services = $query->paginate(12)
             ->appends($request->only(['search', 'filter']))
-            ->withPath(route('services.index')); // agar path selalu ke /services
+            ->withPath(route('admin.services')); // agar path selalu ke /services
     return view('services.admin-services', compact('services'));
 }
 

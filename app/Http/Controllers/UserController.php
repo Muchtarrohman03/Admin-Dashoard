@@ -44,29 +44,51 @@ class UserController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'id_karyawan' => 'required|string|max:255|unique:users,id_karyawan,' . $id,
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email|max:255|unique:users,email,' . $id,
+        $user = User::findOrFail($id);
+
+        // Validasi
+        $validated = $request->validate([
+            'id_karyawan' => 'nullable|string|max:255|unique:users,id_karyawan,' . $id,
+            'name'        => 'nullable|string|max:255',
+            'email'       => 'nullable|email|max:255|unique:users,email,' . $id,
+            'password'    => 'nullable|string|min:6',
             'role'        => 'required|exists:roles,name',
         ]);
 
-        $user = User::findOrFail($id);
-        $user->id_karyawan = $request->id_karyawan;
-        $user->name = $request->name;
-        $user->email = $request->email;
+        // Pertahankan nilai lama jika input tidak diberikan
+        $validated['id_karyawan'] = $validated['id_karyawan'] ?? $user->id_karyawan;
+        $validated['name'] = $validated['name'] ?? $user->name;
+        $validated['email'] = $validated['email'] ?? $user->email;
 
+        // Update field
+        $user->id_karyawan = $validated['id_karyawan'];
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+
+        // Update password jika diberikan
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
         $user->save();
 
-        // Sync role
-        $user->syncRoles([$request->role]);
+        // Update role
+        $user->syncRoles([$validated['role']]);
 
         return redirect()->route('admin.users')->with('success', 'User berhasil diperbarui.');
     }
+
+    public function delete(){
+        return view('users.partials.delete-user');
+    }
+
+    public function destroy(user $user){
+
+        
+        $user->delete();
+         return redirect()->route('admin.users')->with('success', 'Data User Telah Dihapus!');
+    }
+
 
 
 }

@@ -9,8 +9,9 @@
                 <h2 class="font-semibold font-xl text-secondary">Tabel Data Servis</h2>
                  @include('services.partials.add-service')
             </div>
+            {{-- Search, filter bar, download button --}}
             <div class="block lg:flex my-5 items-center justify-between">
-                <form method="GET" action="{{ route('services.index') }}" x-data @submit.prevent="if ($refs.searchInput.value.trim() !== '') $el.submit()">
+                <form method="GET" action="{{ route('admin.services') }}" x-data @submit.prevent="if ($refs.searchInput.value.trim() !== '') $el.submit()">
                     <div class="join">
                         {{-- search input --}}
                         <div>
@@ -20,7 +21,7 @@
                         </div>
                         {{-- filter select --}}
                        <select name="filter" id="filterSelect" class="select select-sm select-bordered join-item leading-tight text-xs"
-                        @change="window.location.href = $event.target.value === '' ? '{{ route('services.index') }}' : '{{ route('services.index') }}?filter=' + $event.target.value" >
+                        @change="window.location.href = $event.target.value === '' ? '{{ route('admin.services') }}' : '{{ route('admin.services') }}?filter=' + $event.target.value" >
                             <option value="">Semua</option>
                             <option value="day" {{ request('filter') == 'day' ? 'selected' : '' }}>Hari ini</option>
                             <option value="week" {{ request('filter') == 'week' ? 'selected' : '' }}>Minggu ini</option>
@@ -40,6 +41,7 @@
                         </div>
                     </div>
                 </form>
+                {{-- Export to excel button --}}
                 <div class="mt-1 lg:mt-0">
                     <a href="{{ route('services.export', request()->only(['search', 'filter'])) }}">
                         <button class="btn btn-sm btn-success text-white">
@@ -111,7 +113,7 @@
                     </div>
                     @if(request()->has('search'))
                         <div class="text-center mt-4">
-                            <a href="{{ route('services.index') }}" class="btn btn-ghost btn-sm  mt-1">Kembali</a>
+                            <a href="{{ route('admin.services') }}" class="btn btn-ghost btn-sm  mt-1">Kembali</a>
                         </div>
                     @endif
 
@@ -119,7 +121,7 @@
                     @if(request()->filled('search'))
                         <div class="text-center text-gray-500 mt-5">
                             <p>Data tidak ditemukan untuk: <strong>{{ request('search') }}</strong>.</p>
-                            <a href="{{ route('services.index') }}" class="btn btn-ghost btn-sm  mt-1">Kembali</a>
+                            <a href="{{ route('admin.services') }}" class="btn btn-ghost btn-sm  mt-1">Kembali</a>
                         </div>
                     @else
                         <div class="text-center text-base text-gray-500 mt-5">

@@ -21,7 +21,10 @@
                             buttonText="Preview" 
                             :buttonLink="route('product.preview', $product->slug)" 
                         />
-                        <p class="font-base text-secondary text-xl ">{{$product->title}}</p>
+                        <div class="flex justify-between">
+                            <p class="font-base text-secondary text-xl ">{{$product->title}}</p>
+                            <p class="font-base text-secondary text-xl">stok : {{$product->stock}}</p>
+                        </div>
                         <p class="font-semibold text-gray-400 mb-1">Rp.{{ number_format($product->harga) }}</p>
                         <div class="flex justify-between gap-2 mx-2">
                         <button
