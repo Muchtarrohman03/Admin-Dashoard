@@ -9,6 +9,7 @@
       @csrf
 
       {{-- Select Produk --}}
+       <x-input-label for="tanggal_pembelian" class="text-secondary" :value="__('Pilih Produk')" />
       <div>
         @foreach($products as $product)
         <div class="flex items-center space-x-4 mb-2">
@@ -17,6 +18,9 @@
                   value="1" 
                   class="checkbox checkbox-primary product-checkbox"
                   onchange="toggleQty(this, {{ $product->id }})" />
+
+                          {{-- Tampilkan judul produk --}}
+            <span class="w-48">{{ $product->title }}</span>
 
             <input type="number" 
                   name="products[{{ $product->id }}][kuantitas]" 

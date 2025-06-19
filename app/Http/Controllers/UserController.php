@@ -40,7 +40,7 @@ class UserController extends Controller
         $user->assignRole($request->role);
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->route('admin.users')->with('success', 'Produk berhasil ditambahkan.');
+        return redirect()->route('admin.users')->with('success', 'User berhasil ditambahkan.');
     }
     public function update(Request $request, $id)
     {

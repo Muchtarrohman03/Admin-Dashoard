@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboardcontroller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -12,12 +13,21 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'index', 'title' => 'Dashbard',])->name('dashboard');
+    Route::get('/chart-data', [DashboardController::class, 'getServiceChartData'])->name('dashboard.chart-data');
+    Route::get('/product-stock-data', [DashboardController::class, 'getProductStockChartData'])->name('dashboard.product-stock');
+    Route::get('/order-chart', [DashboardController::class, 'getOrderChartData'])->name('dashboard.order-chart');
+});
 
 // Auth & verified wajib untuk semua
 Route::middleware(['auth', 'verified'])->group(function () {
+
     // Admin Users → hanya pimpinan & administrator
     Route::middleware(['role:admin|administrator'])->group(function () {
         //manage carousel image
@@ -35,10 +45,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/services', [ServiceController::class, 'store'])->name('admin.services.store');
         Route::put('/admin/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
         Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
+        Route::get('/export/excel', [ServiceController::class, 'export'])->name('services.export');
 
         //Manage Orders
         Route::get('/admin/orders', [OrderController::class, 'admin'])->name('admin.orders');
         Route::post('/admin/orders', [OrderController::class, 'store'])->name('admin.orders.store');
+        Route::put('/admin/orders/{id}', [OrderController::class, 'update'])->name('admin.orders.update');
+        Route::delete('/admin/orders/{id}', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
+        Route::get('/orders/export', [OrderController::class, 'export'])->name('orders.export');
+        
     });
     Route::middleware(['role:pimpinan|administrator'])->group(function () {
         //
@@ -46,6 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/product/preview/{slug}', [ProductController::class, 'preview'])->name('product.preview');
         Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
         Route::get('/export/excel', [ServiceController::class, 'export'])->name('services.export');
+        Route::get('/orders/export', [OrderController::class, 'export'])->name('orders.export');
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
         //manage users
         Route::get('/admin/users', [UserController::class, 'admin'])->name('admin.users');

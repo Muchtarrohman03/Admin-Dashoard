@@ -1,3 +1,4 @@
+@section('title', 'Produk')
 <x-app-layout>
         <div class=" mt-10 max-w-7xl mx-auto px-3 py-10 sm:px-6 lg:px-8">
             @if (session()->has('success'))
@@ -21,7 +22,7 @@
                         />
                         <div class="flex justify-between">
                             <p class="font-base text-secondary text-xl ">{{$product->title}}</p>
-                            <p class="font-base text-secondary text-xl">{{$product->stock}}</p>
+                            <p class="font-base text-secondary text-xl">Stok: {{$product->stock}}</p>
                         </div>
                         
                         <p class="font-semibold text-gray-400 mb-1">Rp.{{ number_format($product->harga) }}</p>
