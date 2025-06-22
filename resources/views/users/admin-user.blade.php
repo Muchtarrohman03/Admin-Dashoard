@@ -6,8 +6,13 @@
             <x-alert message="{{ session('success') }}" />
             </div>
         @endif
+        @if (session()->has('error'))
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 3000)" x-show="show" x-transition>
+                <x-alert-error message="{{ session('error') }}" />
+            </div>
+        @endif
         <div class="flex mt-6 items-center justify-between">
-            <h1 class="text-start my-3 text-base font-bold text-secondary">Add User</h1>
+            <h1 class="text-start my-3 text-base font-bold text-secondary">Tabel Data User</h1>
             <div class="flex justify-between items-center gap-2" x-data>
                 @include('users.partials.add-user')
             </div>

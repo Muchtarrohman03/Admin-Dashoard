@@ -13,7 +13,7 @@
 </button>
 <dialog id="edit_modal_{{ $index }}" class="modal">
   <div class="modal-box max-w-2xl max-h-[600px] lg:overflow-y-hidden mx-auto bg-base-100 px-3 py-10 sm:px-6 lg:px-8">
-    <h2 class="flex mx-10 text-lg items-center justify-between">Edit Service</h2>
+    <h2 class="flex mx-10 text-lg items-center text-secondary font-semibold justify-between">Edit Data Servis</h2>
     
     <form enctype="multipart/form-data" method="POST" action="{{ route('admin.services.update', $service->service_id) }}" class="w-full justify-center lg:flex lg:gap-x-6">
       @csrf

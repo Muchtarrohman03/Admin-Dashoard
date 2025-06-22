@@ -27,25 +27,26 @@ class RolePermissionSeeder extends Seeder
         }
 
         // Roles
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $pimpinan = Role::firstOrCreate(['name' => 'pimpinan']);
-        $administrator = Role::firstOrCreate(['name' => 'administrator']);
+    $admin = Role::firstOrCreate(['name' => 'admin']);
+    $pimpinan = Role::firstOrCreate(['name' => 'pimpinan']);
+    $superAdmin = Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
 
-        // Admin: CRUD products, services, orders (no user)
-        $admin->syncPermissions([
-            'view products', 'create products', 'edit products', 'delete products',
-            'view services', 'create services', 'edit services', 'delete services',
-            'view orders', 'create orders', 'edit orders', 'delete orders',
-        ]);
+    // Admin: CRUD products, services, orders (no user)
+    $admin->syncPermissions([
+        'view products', 'create products', 'edit products', 'delete products',
+        'view services', 'create services', 'edit services', 'delete services',
+        'view orders', 'create orders', 'edit orders', 'delete orders',
+    ]);
 
-        // Pimpinan: View semua, hanya CRUD users
-        $pimpinan->syncPermissions([
-            'view products', 'view services', 'view orders',
-            'view users', 'create users', 'edit users', 'delete users',
-        ]);
+    // Pimpinan: View semua, hanya CRUD users
+    $pimpinan->syncPermissions([
+        'view products', 'view services', 'view orders',
+        'view users', 'create users', 'edit users', 'delete users',
+    ]);
 
-        // Administrator: full access
-        $administrator->syncPermissions(Permission::all());
+    // Super Admin: full access
+    $superAdmin->syncPermissions(Permission::all());
+
     }
 }
 

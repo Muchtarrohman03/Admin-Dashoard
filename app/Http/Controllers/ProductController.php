@@ -40,113 +40,154 @@ class ProductController extends Controller
         return view('product.preview', compact('product'));
     }
     
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        //dd($request->all());
-        $this->validate($request, [
-            'title' => 'required',
-            'harga' => 'required|numeric',
-            'stock' => 'required|numeric',
-            'image' => 'required|image|mimes:png,jpg',
-            'specification' => 'required|array', // validasi bahwa harus array
+        // 1. Validasi
+        $validated = $request->validate([
+            'title'         => 'required|string|max:255',
+            'harga'         => 'required|numeric',
+            'stock'         => 'required|numeric',
+            'image'         => 'required|image|mimes:png,jpg,jpeg',
+            'description'   => 'required|string|max:600',
+            'specification' => 'nullable|array',
+            'images.*'      => 'nullable|image|mimes:png,jpg,jpeg',
         ]);
 
+        // 2. Simpan gambar utama
         $image = $request->file('image');
         $image->storeAs('public/products', $image->hashName());
 
-        $product = Product::create([
-            'title' => $request->title,
-            'harga' => str_replace('.', '', $request->harga),
-            'stock' => $request->stock,
-            'description' => $request->description,
-            'image' => 'products/' . $image->hashName(),
+        // 3. Simpan data produk melalui relasi user → products
+        $product = $request->user()->products()->create([
+            'title'       => $validated['title'],
+            'harga'       => str_replace('.', '', $validated['harga']),
+            'stock'       => $validated['stock'],
+            'description' => $validated['description'],
+            'image'       => 'products/' . $image->hashName(),
         ]);
 
+        // 4. Debug: apakah produk tersimpan?
+        if (!$product) {
+            dd('Produk gagal disimpan');
+        }
+
+        // 5. Simpan carousel image (jika ada)
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $carouselImage) {
-                $fileName = $carouselImage->hashName();
-                $carouselImage->storeAs('public/carousel', $fileName);
+                $carouselImage->storeAs('public/carousel', $carouselImage->hashName());
 
                 $product->images()->create([
-                    'image' => 'carousel/' . $fileName,
+                    'image' => 'carousel/' . $carouselImage->hashName(),
                 ]);
             }
         }
 
-        // Simpan semua spesifikasi sebagai JSON dalam kolom `data`
-        $product->specification()->create([
-            'data' => $request->specification, // ini array, Laravel otomatis simpan sebagai JSON
-        ]);
+        // 6. Simpan spesifikasi (jika ada)
+        if (!empty($validated['specification'])) {
+            $product->specification()->create([
+                'data' => $validated['specification'],
+            ]);
+        }
 
+        // 7. Redirect sukses
         return redirect()->route('admin.product')->with('success', 'Produk berhasil ditambahkan.');
     }
+
+
+
 
 
     // public function edit(Product $product){
     //      return view('product.edit', compact('product'));
     // }
 
-public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product)
     {
+        /* 1. Pastikan user berhak mengubah produk ini */
+       // abort_if($request->user()->id !== $product->user_id, 403, 'Tidak diizinkan');
 
+        /* 2. Validasi input */
         $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'harga' => 'nullable|numeric',
-            'stock' => 'nullable|numeric',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
-            'images.*' => 'nullable|image|max:2048',
+            'title'         => 'nullable|string|max:255',
+            'harga'         => 'nullable|numeric',
+            'stock'         => 'nullable|numeric',
+            'description'   => 'nullable|string|max:600',
+            'image'         => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'images.*'      => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'specification' => 'nullable|array',
         ]);
 
-        // Update produk utama
-        $validated['title'] = $validated['title'] ?? $product->title;
-        $validated['harga'] = $validated['harga'] ?? $product->harga;
-        $validated['stock'] = $validated['stock'] ?? $product->stock;
-        $validated['description'] = $validated['description'] ?? $product->description;
+        /* 3. Set nilai default jika field tidak diisi */
+        $data = [
+            'title'       => $validated['title']       ?? $product->title,
+            'harga'       => $validated['harga']       ?? $product->harga,
+            'stock'       => $validated['stock']       ?? $product->stock,
+            'description' => $validated['description'] ?? $product->description,
+        ];
 
+        /* 4. Perbarui gambar utama (jika ada) */
         if ($request->hasFile('image')) {
             if ($product->image && $product->image !== 'noimage.png') {
                 Storage::disk('public')->delete($product->image);
             }
-            $validated['image'] = $request->file('image')->store('', 'public');
-        } else {
-            $validated['image'] = $product->image;
+            $file = $request->file('image');
+            $file->storeAs('public/products', $file->hashName());
+            $data['image'] = 'products/' . $file->hashName();
         }
 
-        $product->update($validated);
+        /* 5. Simpan perubahan data dasar produk */
+        $product->update($data);
 
-        // Upload carousel image baru
+        /* 6. Tambah gambar carousel baru (jika ada) */
         if ($request->hasFile('images')) {
-            $files = $request->file('images');
-            if (!is_array($files)) {
-                $files = [$files];
-            }
-            foreach ($files as $carousel) {
-                $path = $carousel->store('', 'public');
-                $product->images()->create(['image' => $path]);
+            foreach ($request->file('images') as $carousel) {
+                $carousel->storeAs('public/carousel', $carousel->hashName());
+                $product->images()->create([
+                    'image' => 'carousel/' . $carousel->hashName(),
+                ]);
             }
         }
 
-
-        // Update/Replace spesifikasi
+        /* 7. Perbarui / buat spesifikasi (kolom JSON) */
         if ($request->filled('specification')) {
-            $data = $request->input('specification')[0]; // One to one
             $product->specification()->updateOrCreate(
                 ['product_id' => $product->id],
-                ['key' => $data['key'], 'value' => $data['value']]
+                ['data' => $validated['specification']]   // simpan sebagai JSON
             );
         }
 
-        return redirect()->route('admin.product')->with('success', 'Produk berhasil diperbarui.');
-        
+        /* 8. Redirect sukses */
+        return redirect()
+            ->route('admin.product')
+            ->with('success', 'Produk berhasil diperbarui.');
     }
 
-    public function destroy(Product $product){
-        if($product->image !== 'noimage.png'){
-            Storage::disk('local')->delete('public/'. $product->image);
-        }
-        $product->delete();
-        return redirect()->route('admin.product')->with('success', 'Produk berhasil dihapus.');
+public function destroy(Request $request, Product $product)
+{
+    // 1. Pastikan user login adalah pemilik produk
+    abort_if($request->user()->id !== $product->user_id, 403, 'Tidak diizinkan menghapus produk ini');
+
+    // 2. Hapus gambar utama jika bukan gambar default
+    if ($product->image && $product->image !== 'noimage.png') {
+        Storage::disk('public')->delete($product->image);
     }
+
+    // 3. Hapus semua gambar carousel terkait
+    foreach ($product->images as $image) {
+        Storage::disk('public')->delete($image->image);
+        $image->delete(); // hapus record-nya
+    }
+
+    // 4. Hapus spesifikasi (relasi one-to-one)
+    if ($product->specification) {
+        $product->specification->delete();
+    }
+
+    // 5. Hapus produk itu sendiri
+    $product->delete();
+
+    // 6. Redirect
+    return redirect()->route('admin.product')->with('success', 'Produk berhasil dihapus.');
+}
 
 }

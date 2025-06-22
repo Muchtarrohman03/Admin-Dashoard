@@ -39,9 +39,9 @@
           <x-input-label for="role" :value="__('Role')" />
           <select name="role" id="role" class="select select-bordered w-full" required>
             <option disabled selected>Pilih Role</option>
-            <option value="admin">Admin</option>
-            <option value="pimpinan">Pimpinan</option>
-            <option value="administrator">Administrator</option>
+            <option value="admin">admin</option>
+            <option value="pimpinan">pimpinan</option>
+            <option value="super admin">super admin</option>
           </select>
         </div>
 

@@ -26,7 +26,7 @@
                     <img src="{{url('IKK-1-removebg-preview.png')}}" height="50px" width="70px"  alt="">
                 </a>
             </div>
-            <h1 class=" text-base text-center  py-3  lg:text-2xl font-bold text-primary">Sistem Manajemen Produk dan Servis PT.Indo Karya Komunika</h1>
+            <h1 class=" text-base text-center  py-3  lg:text-2xl font-bold text-primary">Sistem Informasi Manajemen Pengelolaan Fiber Optic PT.Indo Karya Komunika</h1>
 
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-base-100 shadow-md hover:shadow-primary overflow-hidden sm:rounded-lg">
                 {{ $slot }}

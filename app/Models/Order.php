@@ -12,7 +12,8 @@ class Order extends Model
         'pembeli',
         'email',
         'telepon',
-        'alamat_pengiriman'
+        'alamat_pengiriman',
+        'user_id'
     ];
         protected $casts = [
             'tanggal_pembelian' => 'date'
@@ -31,5 +32,9 @@ class Order extends Model
     public function products()
     {
     return $this->belongsToMany(Product::class)->withPivot('kuantitas')->withTimestamps();
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

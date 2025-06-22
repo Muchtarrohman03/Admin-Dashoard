@@ -16,7 +16,7 @@
                         </svg>
                         Download
                     </button>
-                </a>
+            </a>
         </div>
         <table class="table table-zebra w-full">
             <thead>

@@ -51,17 +51,17 @@
                 <x-input-label for="role" value="Role" />
                 <select name="role" id="role" class="select select-bordered w-full" required>
                     <option value="" disabled>Pilih Role</option>
-                    <option value="admin">Admin</option>
-                    <option value="pimpinan">Pimpinan</option>
-                    <option value="administrator">Administrator</option>
+                    <option value="admin">admin</option>
+                    <option value="pimpinan">pimpinan</option>
+                    <option value="super admin">super admin</option>
                 </select>
             </div>
 
             <!-- Tombol Submit -->
             <div>
-                <x-primary-button class="w-full text-base-100">
-                    Simpan Perubahan
-                </x-primary-button>
+            <x-primary-button class="btn w-full justify-center mt-2">
+              {{ __('Submit') }}
+            </x-primary-button>
             </div>
         </div>
     </form>

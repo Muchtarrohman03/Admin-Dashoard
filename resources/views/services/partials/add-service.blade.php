@@ -2,7 +2,7 @@
 <button class="btn btn-sm btn-primary" onclick="my_modal_3.showModal()">Tambah</button>
 <dialog id="my_modal_3" class="modal ">
   <div class=" modal-box max-w-2xl max-h-[600px] lg:overflow-y-hidden mx-auto  bg-base-100 px-3 py-10 sm:px-6 lg:px-8">
-    <h2 class="flex mx-10 text-lg items-center justify-between text-primary">Add Service</h2>
+    <h2 class="flex mx-10 text-lg items-center justify-between text-secondary font-semibold">Tambah Servis</h2>
     <form enctype="multipart/form-data" method="POST" action="{{route('admin.services.store')}}" class="w-full justify-center lg:flex lg:gap-x-6">
         @csrf
         <div class="w-full mx-10">

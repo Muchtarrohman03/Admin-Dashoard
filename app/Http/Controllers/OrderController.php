@@ -80,7 +80,7 @@ class OrderController extends Controller
         DB::transaction(function () use ($request, $validated) {
 
             /* -- 3a. Buat Order dengan invoice otomatis -- */
-            $order = Order::create([
+            $order = $request->user()->orders()->create([
                 'invoice'           => generateInvoice($validated['tanggal_pembelian']),
                 'tanggal_pembelian' => $validated['tanggal_pembelian'],
                 'pembeli'           => $validated['pembeli'],
@@ -107,7 +107,7 @@ class OrderController extends Controller
             }
         });
 
-        return redirect()->route('admin.orders')->with('success', 'Order berhasil dibuat dan stock ter‑update.');
+        return redirect()->route('admin.orders')->with('success', 'Order berhasil dibuat dan stok produk telah diperbarui.');
     }
 
 
@@ -211,7 +211,7 @@ class OrderController extends Controller
 
         return redirect()
             ->route('admin.orders')
-            ->with('success', 'Pesanan & stock berhasil diperbarui.');
+            ->with('success', 'Data Pesanan berhasil diperbarui.');
     }
     /**
      * Remove the specified resource from storage.
@@ -237,7 +237,7 @@ class OrderController extends Controller
 
         return redirect()
             ->route('admin.orders')
-            ->with('success', 'Pesanan berhasil dihapus dan stock dikembalikan.');
+            ->with('success', 'Data Pesanan berhasil dihapus !');
     }
     
     public function export()

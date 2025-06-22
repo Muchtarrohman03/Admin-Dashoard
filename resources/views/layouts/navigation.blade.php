@@ -8,7 +8,7 @@
         $menus[] = ['label' => 'Servis', 'route' => 'admin.services'];
         $menus[] = ['label' => 'Pesanan', 'route' => 'admin.orders'];
     }
-    if($user->hasRole('administrator')){
+    if($user->hasRole('super admin')){
         $menus[] = ['label' => 'Produk', 'route' => 'admin.product'];
         $menus[] = ['label' => 'Servis', 'route' => 'admin.services'];
         $menus[] = ['label' => 'Pesanan', 'route' => 'admin.orders'];
@@ -59,20 +59,19 @@
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2  text-sm leading-4 font-medium rounded-md text-gray-500 bg-transparent hover:bg-base-200/60 hover:text-primary focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
+                    <button class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-md text-gray-500 bg-transparent hover:bg-base-200/60 hover:text-primary focus:outline-none transition ease-in-out duration-150">
+                            <img src="{{ Avatar::create(Auth::user()->name)->toBase64() }}" alt="Avatar" class="w-8 h-8 rounded-full">
+                        <div class="ms-1">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </button>
                     </x-slot>
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                           <div>{{ Auth::user()->short_name }}&nbsp;|&nbsp;{{ Auth::user()->getRoleNames()->first() }}</div>
                         </x-dropdown-link>
 
                         <!-- Authentication -->

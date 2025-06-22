@@ -2,7 +2,7 @@
 <x-app-layout>
     <div class="mt-10 max-w-7xl mx-auto px-3 py-10 sm:px-6 lg:px-8">
         <div class="flex mt-6 items-center justify-between">
-            <h1 class="text-start my-3 text-base font-bold text-secondary">Add User</h1>
+            <h1 class="text-start my-3 text-base font-bold text-secondary">Tabel Data User</h1>
         </div>
     
     <table class="table w-full table-zebra border border-base-300">

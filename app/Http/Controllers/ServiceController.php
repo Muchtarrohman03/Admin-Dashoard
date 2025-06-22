@@ -105,7 +105,7 @@ public function admin(Request $request){
 
 
 
-        Service::create([
+        $request->user()->services()->create([
             'tanggal_masuk' => $request->tanggal_masuk,
             'owner' => $request->owner,
             'kendala' => $request->kendala,

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +11,7 @@ class Service extends Model
 {
      use HasFactory;
      protected $primaryKey = 'service_id';
-     protected $fillable = ['tanggal_masuk', 'owner','kendala','penggantian_part','tipe','serial_number'];
+     protected $fillable = ['tanggal_masuk', 'owner','kendala','penggantian_part','tipe','serial_number', 'user_id'];
      public $incrementing = false; // <- WAJIB
      protected $keyType = 'string'; // <- WAJIB
      protected static function boot()
@@ -44,6 +45,10 @@ class Service extends Model
     public function getTanggalMasukFormattedAttribute()
     {
     return \Carbon\Carbon::parse($this->tanggal_masuk)->format('d-m-Y');
+    }
+
+    public function user(){
+         return $this->belongsTo(User::class, 'user_id');
     }
 
 

@@ -17,7 +17,7 @@
                         {{-- search input --}}
                         <div>
                             <div>
-                                <input type="search" x-ref="searchInput" name="search" class="input input-sm input-bordered join-item" placeholder="Cari Data Servis" value="{{ request('search') }}"/>
+                                <input type="search" x-ref="searchInput" name="search" class="input input-sm input-bordered join-item" placeholder="Cari Owner" value="{{ request('search') }}"/>
                             </div>
                         </div>
                         {{-- filter select --}}

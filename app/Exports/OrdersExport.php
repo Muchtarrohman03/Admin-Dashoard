@@ -6,14 +6,15 @@ use App\Models\Order;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
+
 class OrdersExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
         $data = [];
 
-        // Ambil semua order beserta produk terkaitnya
-        $orders = Order::with('products')->get();
+        // Ambil semua order beserta relasi product dan user
+        $orders = Order::with(['products', 'user'])->get();
 
         foreach ($orders as $order) {
             foreach ($order->products as $product) {
@@ -22,13 +23,14 @@ class OrdersExport implements FromCollection, WithHeadings
                 $subtotal = $kuantitas * $harga_satuan;
 
                 $data[] = [
-                    'Order ID'           => $order->id,
+                    'Nomor Invoice'           => $order->invoice,
                     'Pembeli'            => $order->pembeli,
                     'Tanggal Pembelian'  => $order->tanggal_pembelian,
                     'Produk'             => $product->title,
                     'Kuantitas'          => $kuantitas,
                     'Harga Satuan'       => $harga_satuan,
                     'Subtotal'           => $subtotal,
+                    'Penginput'     => $order->user->name ?? '-', // nama user
                 ];
             }
         }
@@ -39,13 +41,14 @@ class OrdersExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'No.',
+            'Nomor Invoice',
             'Pembeli',
             'Tanggal Pembelian',
             'Produk',
             'Kuantitas',
             'Harga Satuan',
             'Subtotal',
+            'Penginput',
         ];
     }
 }
